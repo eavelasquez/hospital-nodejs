@@ -12,7 +12,9 @@ var User = require('../models/user');
 //====================================================================
 app.get( '/', (request, response, next) => {
     // Buscar todos los registros con los campos name, surname, img, role
-    User.find({}, 'name surname email img role').exec((error, users) => {
+    let desde = request.query.desde || 0;
+    desde = Number(desde);
+    User.find({}, 'name surname email img role').skip(desde).limit(4).exec((error, users) => {
         if (error) {
             return response.status(500).json({
                 ok: false,
@@ -20,11 +22,21 @@ app.get( '/', (request, response, next) => {
                 errors: error
             });
         }
-        response.status(200).json({
-            ok: true,
-            users
+        User.count({}, (error, conteo) => {
+            if (error) {
+                return response.status(500).json({
+                   ok: false,
+                   mensaje: 'Error cargando usuarios',
+                    errors: error
+                });
+            }
+            response.status(200).json({
+                ok: true,
+                user: users,
+                total: conteo
+            });
         });
-    })
+    });
 });
 
 
@@ -66,7 +78,7 @@ app.put('/:id', mdAutenticacion.verificaToken, (request, response) => {
                     errors: error
                 });
             }
-            userSave.password = ':)'
+            userSave.password = ':)';
             response.status(200).json({
                 ok: true,
                 user: userSave

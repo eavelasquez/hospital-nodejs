@@ -15,7 +15,7 @@ var userShcema = new Schema ({
     surname: { type: String, required: [true, 'Campo obligatorio'] },
     email: { type: String, unique: true, required: [true, 'Campo obligatorio'] },
     password: { type: String, required: [true, 'Campo obligatorio'] },
-    img: { type: String, required: false },
+    img: { type: String, required: false, default: null },
     role: { type: String, required: [true, "Campo obligatorio"], default: 'User', enum: rolesValidos }
 });
 
